@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useAssets } from "../hooks/useAssets";
+import { useAssetStore } from "../store/useAssetStore";
 import { SkeletonTable } from "@/components/ui/Skeleton";
 import type { Asset } from "../types";
 
@@ -44,12 +45,19 @@ export function AssetsTable() {
     hasNextPage,
     isFetchingNextPage
   } = useAssets();
+  const { search, setSearch, selectedAssetId, setSelectedAssetId } =
+    useAssetStore();
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (
+          entries[0].isIntersecting &&
+          hasNextPage &&
+          !isFetchingNextPage &&
+          !search
+        ) {
           fetchNextPage();
         }
       },
@@ -58,12 +66,27 @@ export function AssetsTable() {
 
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, search]);
 
   if (isError) throw error;
 
+  const filtered = data?.assets.filter(
+    (asset) =>
+      asset.name.toLowerCase().includes(search.toLowerCase()) ||
+      asset.symbol.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="space-y-4">
+      {/* Search */}
+      <input
+        type="text"
+        placeholder="Search by name or symbol..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full max-w-sm rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm shadow-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+      />
+
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
         {isLoading ? (
           <div className="p-6">
@@ -91,10 +114,19 @@ export function AssetsTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {data?.assets.map((asset: Asset) => (
+              {filtered?.map((asset: Asset) => (
                 <tr
                   key={asset.id}
-                  className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                  onClick={() =>
+                    setSelectedAssetId(
+                      selectedAssetId === asset.id ? null : asset.id
+                    )
+                  }
+                  className={`transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                    selectedAssetId === asset.id
+                      ? "bg-blue-50 dark:bg-blue-950"
+                      : ""
+                  }`}
                 >
                   <td className="px-6 py-4 text-gray-400">{asset.rank}</td>
                   <td className="px-6 py-4">
@@ -102,7 +134,7 @@ export function AssetsTable() {
                       <span className="font-semibold text-gray-900 dark:text-white">
                         {asset.name}
                       </span>
-                      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700">
+                      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                         {asset.symbol}
                       </span>
                     </div>
@@ -122,7 +154,6 @@ export function AssetsTable() {
           </table>
         )}
 
-        {/* Trigger del infinite scroll */}
         <div ref={loaderRef} className="p-4">
           {isFetchingNextPage && <SkeletonTable rows={5} />}
         </div>
