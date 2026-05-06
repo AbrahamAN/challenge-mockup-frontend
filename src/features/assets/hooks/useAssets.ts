@@ -1,20 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAssets } from "../services/coincap";
 
-interface UseAssetsParams {
-  page: number;
-  limit?: number;
-}
+const LIMIT = 20;
 
-export function useAssets({ page, limit = 20 }: UseAssetsParams) {
-  const offset = (page - 1) * limit;
-
-  return useQuery({
-    queryKey: ["assets", page, limit],
-    queryFn: () => getAssets(limit, offset),
+export function useAssets() {
+  return useInfiniteQuery({
+    queryKey: ["assets"],
+    queryFn: ({ pageParam = 0 }) => getAssets(LIMIT, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const nextOffset = allPages.length * LIMIT;
+      return lastPage.data.length < LIMIT ? undefined : nextOffset;
+    },
     select: (data) => ({
-      assets: data.data,
-      timestamp: data.timestamp
+      assets: data.pages.flatMap((page) => page.data),
+      timestamp: data.pages[data.pages.length - 1].timestamp
     })
   });
 }

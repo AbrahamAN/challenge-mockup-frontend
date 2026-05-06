@@ -4,7 +4,7 @@ import type {
   AssetHistoryResponse
 } from "../types";
 
-const BASE_URL = "https://rest.coincap.io/v3/assets";
+const BASE_URL = "https://rest.coincap.io/v3";
 
 export async function getAssets(
   limit = 20,
