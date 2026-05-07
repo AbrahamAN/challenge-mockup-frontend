@@ -11,22 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric"
-  });
-}
-
-function formatPrice(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(value);
-}
+import { formatDate, formatPriceFromNumber } from "../utils/formatters";
 
 export function AssetChart() {
   const { selectedAssetId } = useAssetStore();
@@ -80,7 +65,10 @@ export function AssetChart() {
               width={80}
             />
             <Tooltip
-              formatter={(value) => [formatPrice(value as number), "Price"]}
+              formatter={(value) => [
+                formatPriceFromNumber(value as number),
+                "Price"
+              ]}
               labelStyle={{ color: "#111827" }}
               contentStyle={{
                 border: "1px solid #e5e7eb",

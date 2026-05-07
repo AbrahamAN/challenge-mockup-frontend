@@ -5,22 +5,7 @@ import { useAssets } from "../hooks/useAssets";
 import { useAssetStore } from "../store/useAssetStore";
 import { SkeletonTable } from "@/components/ui/Skeleton";
 import type { Asset } from "../types";
-
-function formatPrice(value: string): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 6
-  }).format(parseFloat(value));
-}
-
-function formatMarketCap(value: string): string {
-  const num = parseFloat(value);
-  if (num >= 1_000_000_000) return `$${(num / 1_000_000_000).toFixed(2)}B`;
-  if (num >= 1_000_000) return `$${(num / 1_000_000).toFixed(2)}M`;
-  return `$${num.toFixed(2)}`;
-}
+import { formatMarketCap, formatPriceFromString } from "../utils/formatters";
 
 function ChangePercent({ value }: { value: string }) {
   const num = parseFloat(value);
@@ -175,7 +160,7 @@ export function AssetsTable() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white">
-                    {formatPrice(asset.priceUsd)}
+                    {formatPriceFromString(asset.priceUsd)}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <ChangePercent value={asset.changePercent24Hr} />
