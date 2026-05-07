@@ -45,8 +45,14 @@ export function AssetsTable() {
     hasNextPage,
     isFetchingNextPage
   } = useAssets();
-  const { search, setSearch, selectedAssetId, setSelectedAssetId } =
-    useAssetStore();
+  const {
+    search,
+    setSearch,
+    selectedAssetId,
+    setSelectedAssetId,
+    changeFilter,
+    marketCapFilter
+  } = useAssetStore();
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,7 +62,9 @@ export function AssetsTable() {
           entries[0].isIntersecting &&
           hasNextPage &&
           !isFetchingNextPage &&
-          !search
+          !search &&
+          changeFilter === "all" &&
+          marketCapFilter === "all"
         ) {
           fetchNextPage();
         }
@@ -66,15 +74,42 @@ export function AssetsTable() {
 
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, search]);
+  }, [
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    search,
+    changeFilter,
+    marketCapFilter
+  ]);
 
   if (isError) throw error;
 
-  const filtered = data?.assets.filter(
-    (asset) =>
+  const filtered = data?.assets.filter((asset) => {
+    // Search filter
+    const matchesSearch =
       asset.name.toLowerCase().includes(search.toLowerCase()) ||
-      asset.symbol.toLowerCase().includes(search.toLowerCase())
-  );
+      asset.symbol.toLowerCase().includes(search.toLowerCase());
+
+    // Change 24h filter
+    const change = parseFloat(asset.changePercent24Hr);
+    const matchesChange =
+      changeFilter === "all" ||
+      (changeFilter === "positive" && change >= 0) ||
+      (changeFilter === "negative" && change < 0);
+
+    // Market cap filter
+    const marketCap = parseFloat(asset.marketCapUsd);
+    const matchesMarketCap =
+      marketCapFilter === "all" ||
+      (marketCapFilter === "large" && marketCap >= 10_000_000_000) ||
+      (marketCapFilter === "mid" &&
+        marketCap >= 1_000_000_000 &&
+        marketCap < 10_000_000_000) ||
+      (marketCapFilter === "small" && marketCap < 1_000_000_000);
+
+    return matchesSearch && matchesChange && matchesMarketCap;
+  });
 
   return (
     <div className="space-y-4">

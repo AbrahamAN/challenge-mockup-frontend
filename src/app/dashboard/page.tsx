@@ -1,6 +1,7 @@
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { AssetsTable } from "@/features/assets/components/AssetsTable";
 import { AssetChart } from "@/features/assets/components/AssetChart";
+import { AssetFilters } from "@/features/assets/components/AssetFilters";
 
 export default function DashboardPage() {
   return (
@@ -15,6 +16,9 @@ export default function DashboardPage() {
           </p>
         </div>
         <ErrorBoundary>
+          <div className="mb-4">
+            <AssetFilters />
+          </div>
           <div className="space-y-6">
             <AssetChart />
             <AssetsTable />
