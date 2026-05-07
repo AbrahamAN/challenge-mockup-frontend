@@ -5,6 +5,7 @@ import { useAssets } from "../hooks/useAssets";
 import { useAssetStore } from "../store/useAssetStore";
 import { SkeletonTable } from "@/components/ui/Skeleton";
 import type { Asset } from "../types";
+import { useRouter } from "next/navigation";
 import { formatMarketCap, formatPriceFromString } from "../utils/formatters";
 
 function ChangePercent({ value }: { value: string }) {
@@ -38,7 +39,10 @@ export function AssetsTable() {
     changeFilter,
     marketCapFilter
   } = useAssetStore();
+
   const loaderRef = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -112,6 +116,16 @@ export function AssetsTable() {
           <div className="p-6">
             <SkeletonTable rows={20} />
           </div>
+        ) : filtered?.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <p className="text-4xl mb-4">🔍</p>
+            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+              No assets found
+            </p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Try adjusting your search or filters
+            </p>
+          </div>
         ) : (
           <table className="w-full text-sm">
             <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
@@ -137,11 +151,12 @@ export function AssetsTable() {
               {filtered?.map((asset: Asset) => (
                 <tr
                   key={asset.id}
-                  onClick={() =>
+                  onClick={() => {
                     setSelectedAssetId(
                       selectedAssetId === asset.id ? null : asset.id
-                    )
-                  }
+                    );
+                    router.push(`/dashboard/${asset.id}`);
+                  }}
                   className={`transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
                     selectedAssetId === asset.id
                       ? "bg-blue-50 dark:bg-blue-950"
