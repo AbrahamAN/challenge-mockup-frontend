@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import { useAssets } from "../hooks/useAssets";
 import { useAssetStore } from "../store/useAssetStore";
 import { SkeletonTable } from "@/components/ui/Skeleton";
@@ -8,7 +8,7 @@ import type { Asset } from "../types";
 import { useRouter } from "next/navigation";
 import { formatMarketCap, formatPriceFromString } from "../utils/formatters";
 
-function ChangePercent({ value }: { value: string }) {
+const ChangePercent = memo(function ChangePercent({ value }: { value: string }) {
   const num = parseFloat(value);
   const isPositive = num >= 0;
   return (
@@ -19,7 +19,7 @@ function ChangePercent({ value }: { value: string }) {
       {num.toFixed(2)}%
     </span>
   );
-}
+});
 
 export function AssetsTable() {
   const {
@@ -47,13 +47,13 @@ export function AssetsTable() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        const pageIsScrollable =
+          document.documentElement.scrollHeight > window.innerHeight;
         if (
           entries[0].isIntersecting &&
           hasNextPage &&
           !isFetchingNextPage &&
-          !search &&
-          changeFilter === "all" &&
-          marketCapFilter === "all"
+          pageIsScrollable
         ) {
           fetchNextPage();
         }
@@ -63,18 +63,11 @@ export function AssetsTable() {
 
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    search,
-    changeFilter,
-    marketCapFilter
-  ]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isError) throw error;
 
-  const filtered = data?.assets.filter((asset) => {
+  const filtered = useMemo(() => data?.assets.filter((asset) => {
     // Search filter
     const matchesSearch =
       asset.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -98,7 +91,20 @@ export function AssetsTable() {
       (marketCapFilter === "small" && marketCap < 1_000_000_000);
 
     return matchesSearch && matchesChange && matchesMarketCap;
-  });
+  }), [data?.assets, search, changeFilter, marketCapFilter]);
+
+  // When the active filter returns no results but there are more pages, keep
+  // fetching silently until we find matches or exhaust the API.
+  useEffect(() => {
+    if (
+      !isLoading &&
+      !isFetchingNextPage &&
+      hasNextPage &&
+      filtered?.length === 0
+    ) {
+      fetchNextPage();
+    }
+  }, [filtered?.length, hasNextPage, isFetchingNextPage, isLoading, fetchNextPage]);
 
   return (
     <div className="space-y-4">
@@ -117,15 +123,21 @@ export function AssetsTable() {
             <SkeletonTable rows={20} />
           </div>
         ) : filtered?.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <p className="text-4xl mb-4">🔍</p>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
-              No assets found
-            </p>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Try adjusting your search or filters
-            </p>
-          </div>
+          hasNextPage ? (
+            <div className="p-6">
+              <SkeletonTable rows={5} />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <p className="text-4xl mb-4">🔍</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                No assets found
+              </p>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Try adjusting your search or filters
+              </p>
+            </div>
+          )
         ) : (
           <table className="w-full text-sm">
             <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">

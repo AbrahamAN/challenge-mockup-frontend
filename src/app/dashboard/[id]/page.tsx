@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAsset } from "@/features/assets/hooks/useAsset";
 import { useAssetHistory } from "@/features/assets/hooks/useAssetsHistory";
@@ -20,7 +21,7 @@ import {
   formatDate
 } from "@/features/assets/utils/formatters";
 
-function StatCard({ label, value }: { label: string; value: string }) {
+const StatCard = memo(function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
       <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
@@ -29,7 +30,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
       </p>
     </div>
   );
-}
+});
 
 export default function AssetDetailPage() {
   const { id } = useParams<{ id: string }>();
