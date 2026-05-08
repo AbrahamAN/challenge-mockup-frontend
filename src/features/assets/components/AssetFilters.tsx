@@ -18,7 +18,7 @@ export function AssetFilters() {
             <button
               key={option}
               onClick={() => setChangeFilter(option)}
-              className={`px-3 py-1.5 text-sm transition-colors ${
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm transition-colors ${
                 changeFilter === option
                   ? "bg-blue-600 text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"
@@ -44,7 +44,7 @@ export function AssetFilters() {
             <button
               key={option}
               onClick={() => setMarketCapFilter(option)}
-              className={`px-3 py-1.5 text-sm transition-colors ${
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm transition-colors ${
                 marketCapFilter === option
                   ? "bg-blue-600 text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800"

@@ -5,9 +5,9 @@ import { AssetFilters } from "@/features/assets/components/AssetFilters";
 export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+      <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl font-bold md:text-3xl text-gray-900 dark:text-white">
             Crypto Dashboard
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">

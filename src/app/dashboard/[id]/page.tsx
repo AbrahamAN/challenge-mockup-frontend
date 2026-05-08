@@ -52,18 +52,18 @@ export default function AssetDetailPage() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center gap-4">
+        <div className="mb-6 md:mb-8 flex flex-wrap items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
+            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 md:px-4 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
           >
             ← Back
           </button>
           {assetLoading ? (
             <Skeleton className="h-8 w-48" />
           ) : (
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+              <h1 className="text-xl font-bold md:text-3xl text-gray-900 dark:text-white">
                 {asset?.name}
               </h1>
               <span className="rounded bg-gray-100 px-2 py-1 text-sm text-gray-500 dark:bg-gray-700 dark:text-gray-300">
@@ -106,8 +106,8 @@ export default function AssetDetailPage() {
 
         {/* Chart */}
         <ErrorBoundary>
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <h2 className="mb-4 md:mb-6 text-base md:text-lg font-semibold text-gray-900 dark:text-white">
               Price History (30d)
             </h2>
             {historyLoading ? (

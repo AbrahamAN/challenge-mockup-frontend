@@ -33,8 +33,8 @@ export function AssetChart() {
   }));
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-      <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">
+    <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+      <h2 className="mb-4 md:mb-6 text-base md:text-lg font-semibold text-gray-900 dark:text-white">
         {selectedAssetId.charAt(0).toUpperCase() + selectedAssetId.slice(1)} —
         Price History (30d)
       </h2>

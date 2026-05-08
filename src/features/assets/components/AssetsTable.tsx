@@ -114,7 +114,7 @@ export function AssetsTable() {
         placeholder="Search by name or symbol..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full max-w-sm rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm shadow-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+        className="w-full sm:max-w-sm rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm shadow-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
       />
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
@@ -139,66 +139,70 @@ export function AssetsTable() {
             </div>
           )
         ) : (
-          <table className="w-full text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-              <tr>
-                <th className="px-6 py-3 text-left font-medium text-gray-500">
-                  #
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-500">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-right font-medium text-gray-500">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-right font-medium text-gray-500">
-                  24h %
-                </th>
-                <th className="px-6 py-3 text-right font-medium text-gray-500">
-                  Market Cap
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {filtered?.map((asset: Asset) => (
-                <tr
-                  key={asset.id}
-                  onClick={() => {
-                    setSelectedAssetId(
-                      selectedAssetId === asset.id ? null : asset.id
-                    );
-                    router.push(`/dashboard/${asset.id}`);
-                  }}
-                  className={`transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                    selectedAssetId === asset.id
-                      ? "bg-blue-50 dark:bg-blue-950"
-                      : ""
-                  }`}
-                >
-                  <td className="px-6 py-4 text-gray-400">{asset.rank}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        {asset.name}
-                      </span>
-                      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                        {asset.symbol}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white">
-                    {formatPriceFromString(asset.priceUsd)}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <ChangePercent value={asset.changePercent24Hr} />
-                  </td>
-                  <td className="px-6 py-4 text-right text-gray-500">
-                    {formatMarketCap(asset.marketCapUsd)}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
+                <tr>
+                  <th className="hidden sm:table-cell px-3 py-2 sm:px-6 sm:py-3 text-left font-medium text-gray-500">
+                    #
+                  </th>
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left font-medium text-gray-500">
+                    Name
+                  </th>
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-right font-medium text-gray-500">
+                    Price
+                  </th>
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-right font-medium text-gray-500">
+                    24h %
+                  </th>
+                  <th className="hidden md:table-cell px-3 py-2 sm:px-6 sm:py-3 text-right font-medium text-gray-500">
+                    Market Cap
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                {filtered?.map((asset: Asset) => (
+                  <tr
+                    key={asset.id}
+                    onClick={() => {
+                      setSelectedAssetId(
+                        selectedAssetId === asset.id ? null : asset.id
+                      );
+                      router.push(`/dashboard/${asset.id}`);
+                    }}
+                    className={`transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                      selectedAssetId === asset.id
+                        ? "bg-blue-50 dark:bg-blue-950"
+                        : ""
+                    }`}
+                  >
+                    <td className="hidden sm:table-cell px-3 py-3 sm:px-6 sm:py-4 text-gray-400">
+                      {asset.rank}
+                    </td>
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          {asset.name}
+                        </span>
+                        <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                          {asset.symbol}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-3 sm:px-6 sm:py-4 text-right font-medium text-gray-900 dark:text-white">
+                      {formatPriceFromString(asset.priceUsd)}
+                    </td>
+                    <td className="px-3 py-3 sm:px-6 sm:py-4 text-right">
+                      <ChangePercent value={asset.changePercent24Hr} />
+                    </td>
+                    <td className="hidden md:table-cell px-3 py-3 sm:px-6 sm:py-4 text-right text-gray-500">
+                      {formatMarketCap(asset.marketCapUsd)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         <div ref={loaderRef} className="p-4">
